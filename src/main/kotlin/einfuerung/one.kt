@@ -1,4 +1,4 @@
-package einfuerung.task1
+package einfuerung
 
 fun calculateScore(word: String): Int {
     var score = 0

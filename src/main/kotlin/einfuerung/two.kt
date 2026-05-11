@@ -1,4 +1,4 @@
-package einfuerung.task1
+package einfuerung
 
 class ShoppingCart {
     var cart = ArrayList<String>()

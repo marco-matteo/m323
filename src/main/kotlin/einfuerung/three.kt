@@ -1,4 +1,4 @@
-package einfuerung.task1
+package einfuerung
 
 fun calculateTip(people: List<String>): Int {
     return when (people.size) {
