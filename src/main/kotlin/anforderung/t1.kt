@@ -3,10 +3,7 @@ package anforderung
 import kotlin.system.exitProcess
 
 fun main() {
-    var route: List<String> = listOf()
-    while (true) {
-        route = appLoop(route)
-    }
+    appLoop(emptyList())
 }
 
 fun printOptions(route: List<String>) {
@@ -48,13 +45,15 @@ fun removeDestination(route: List<String>, destination: String): List<String> {
     return route.filter { it != destination }
 }
 
-fun appLoop(route: List<String>): List<String> {
+tailrec fun appLoop(route: List<String>): List<String> {
     printOptions(route)
-    return when (val selected = readln().trim()) {
+    val updatedList = when (val selected = readln().trim()) {
         "1" -> addDestination(route, listenToDestination())
         "2" -> removeDestination(route, listenToDestination("\nEnter destination to delete: "))
-        "3" -> listOf<String>().also { println("Route deleted.") }
+        "3" -> emptyList<String>().also { println("Route deleted.") }
         "4" -> exitProcess(0)
         else -> route.also { println("'$selected' is not a valid option. Please try again.") }
     }
+
+    return appLoop(updatedList)
 }
