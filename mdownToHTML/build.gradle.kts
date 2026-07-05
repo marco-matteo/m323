@@ -1,8 +1,8 @@
 plugins {
     kotlin("jvm") version "2.3.21"
+    application
 }
 
-group = "net.lutius"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -10,13 +10,13 @@ repositories {
 }
 
 dependencies {
-    testImplementation(kotlin("test"))
+    implementation(kotlin("stdlib"))
+}
+
+application {
+    mainClass.set("MainKt")
 }
 
 kotlin {
     jvmToolchain(21)
-}
-
-tasks.test {
-    useJUnitPlatform()
 }
