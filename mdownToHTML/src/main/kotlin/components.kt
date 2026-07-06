@@ -14,14 +14,14 @@ data class Paragraph(val content: String) : MarkdownObject {
     }
 }
 
-data class OrderedList(val entries: MutableList<String>): MarkdownObject {
+data class OrderedList(val entries: List<String>): MarkdownObject {
     override fun transform(): String {
         val listElements = entries.fold("") { acc, it -> "$acc<li>$it</li>" }
         return "<ol>$listElements</ol>"
     }
 }
 
-data class UnorderedList(val entries: MutableList<String>) : MarkdownObject {
+data class UnorderedList(val entries: List<String>) : MarkdownObject {
     override fun transform(): String {
         val listElements = entries.fold("") { acc, it -> "$acc<li>$it</li>" }
         return "<ul>$listElements</ul>"

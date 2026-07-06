@@ -16,25 +16,25 @@ import java.io.Serializable
 
 fun parse(target: String, result: String): Result<Unit> {
     val file = readFileFromPath(target).getOrElse { return Result.failure(it) }
-    val fileStructure = parseMarkdown(file)
+    val fileStructure = parseMarkdown(file.readLines())
     val htmlLines = convertMarkdown(fileStructure)
     val resultFile = buildHTML(htmlLines)
     return writeFileIntoPath(result, resultFile)
 }
 
-fun parseMarkdown(file: File): List<MarkdownObject> {
-    return file.readLines().fold(emptyList()) { acc, line ->
+fun parseMarkdown(lines: List<String>): List<MarkdownObject> {
+    return lines.fold(emptyList()) { acc, line ->
         when {
             line.matches(Regex("^#{1,6} .*")) ->
                 acc + Header(line.indexOf(" "), line.drop(line.indexOf(" ") + 1))
             line.matches(Regex("^[-*+] .*")) -> {
                 val last = acc.lastOrNull()
-                if (last is UnorderedList) acc.dropLast(1) + last.copy(entries = (last.entries + line.drop(line.indexOf(" ") + 1)).toMutableList())
+                if (last is UnorderedList) acc.dropLast(1) + last.copy(entries = (last.entries + line.drop(line.indexOf(" ") + 1)))
                 else acc + UnorderedList(mutableListOf(line.drop(line.indexOf(" ") + 1)))
             }
             line.matches(Regex("^\\d+\\. .*")) -> {
                 val last = acc.lastOrNull()
-                if (last is OrderedList) acc.dropLast(1) + last.copy(entries = (last.entries + line.drop(line.indexOf(" ") + 1)).toMutableList())
+                if (last is OrderedList) acc.dropLast(1) + last.copy(entries = (last.entries + line.drop(line.indexOf(" ") + 1)))
                 else acc + OrderedList(mutableListOf(line.drop(line.indexOf(" ") + 1)))
             }
             else -> acc + Paragraph(line)
