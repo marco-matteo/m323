@@ -7,7 +7,7 @@ This is a **random test** markdown file.
 - Bullet point two
 - Bullet point three
 
-1. test
+1. test **bold** foobar
 2. test2
 3. test3
 

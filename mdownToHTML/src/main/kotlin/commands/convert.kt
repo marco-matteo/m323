@@ -14,11 +14,11 @@ import java.io.Serializable
 // I don't really have any fancy prompt it's just "hey generate me the regex for the following cases..."
 // Something like that.
 
-fun parse(target: String, result: String): Result<Unit> {
+fun parse(target: String, result: String, cssFile: String?): Result<Unit> {
     val file = readFileFromPath(target).getOrElse { return Result.failure(it) }
     val fileStructure = parseMarkdown(file.readLines())
     val htmlLines = convertMarkdown(fileStructure)
-    val resultFile = buildHTML(htmlLines)
+val resultFile = buildHTML(htmlLines, cssFile)
     return writeFileIntoPath(result, resultFile)
 }
 
@@ -68,7 +68,13 @@ fun convertMarkdown(fileStructure: List<MarkdownObject>): List<String> {
     return fileStructure.map { textStyleConvert(it.transform()) }
 }
 
-fun buildHTML(body: List<String>): String {
+fun buildHTML(body: List<String>, cssFile: String?): String {
+    val cssLink = if (cssFile != null) {
+        "<link rel=\"stylesheet\" href=\"$cssFile\">"
+    } else {
+        ""
+    }
+
     val header = """
 <!DOCTYPE html>
 <html lang="en">
@@ -76,6 +82,7 @@ fun buildHTML(body: List<String>): String {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generated</title>
+    $cssLink
 </head>
 <body>""".trimIndent()
     val footer = """
