@@ -18,7 +18,7 @@ fun parse(target: String, result: String, cssFile: String?): Result<Unit> {
     val file = readFileFromPath(target).getOrElse { return Result.failure(it) }
     val fileStructure = parseMarkdown(file.readLines())
     val htmlLines = convertMarkdown(fileStructure)
-val resultFile = buildHTML(htmlLines, cssFile)
+    val resultFile = buildHTML(htmlLines, cssFile)
     return writeFileIntoPath(result, resultFile)
 }
 
