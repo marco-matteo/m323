@@ -7,30 +7,35 @@ import Paragraph
 import UnorderedList
 import readFileFromPath
 import writeFileIntoPath
+import java.io.File
+import java.io.Serializable
 
+// Regex were generated using claude.ai
+// I don't really have any fancy prompt it's just "hey generate me the regex for the following cases..."
+// Something like that.
 
-fun parse(target: String, result: String) {
-    val markdownLines = parseMarkdown(target)
-    val dataHTML = convertMarkdown(markdownLines)
-    val fileHTML = buildHTML(dataHTML)
-    writeFileIntoPath(result, fileHTML)
+fun parse(target: String, result: String): Result<Unit> {
+    val file = readFileFromPath(target).getOrElse { return Result.failure(it) }
+    val fileStructure = parseMarkdown(file)
+    val htmlLines = convertMarkdown(fileStructure)
+    val resultFile = buildHTML(htmlLines)
+    return writeFileIntoPath(result, resultFile)
 }
 
-fun parseMarkdown(path: String): List<MarkdownObject> {
-    val file = readFileFromPath(path).getOrElse { return emptyList() }
+fun parseMarkdown(file: File): List<MarkdownObject> {
     return file.readLines().fold(emptyList()) { acc, line ->
         when {
             line.matches(Regex("^#{1,6} .*")) ->
                 acc + Header(line.indexOf(" "), line.drop(line.indexOf(" ") + 1))
             line.matches(Regex("^[-*+] .*")) -> {
                 val last = acc.lastOrNull()
-                if (last is UnorderedList) acc.dropLast(1) + last.copy(entries = (last.entries + line.drop(2)).toMutableList())
-                else acc + UnorderedList(mutableListOf(line.drop(2)))
+                if (last is UnorderedList) acc.dropLast(1) + last.copy(entries = (last.entries + line.drop(line.indexOf(" ") + 1)).toMutableList())
+                else acc + UnorderedList(mutableListOf(line.drop(line.indexOf(" ") + 1)))
             }
             line.matches(Regex("^\\d+\\. .*")) -> {
                 val last = acc.lastOrNull()
-                if (last is OrderedList) acc.dropLast(1) + last.copy(entries = (last.entries + line.drop(2)).toMutableList())
-                else acc + OrderedList(mutableListOf(line.drop(2)))
+                if (last is OrderedList) acc.dropLast(1) + last.copy(entries = (last.entries + line.drop(line.indexOf(" ") + 1)).toMutableList())
+                else acc + OrderedList(mutableListOf(line.drop(line.indexOf(" ") + 1)))
             }
             else -> acc + Paragraph(line)
         }

@@ -12,6 +12,6 @@ fun readFileFromPath(path: String): Result<File> {
 
 // writeFileIntoPath just writes the passed data form the parameter into
 // whatever file is found in `path`. If a file's already there it's overwritten.
-fun writeFileIntoPath(path: String, data: String) {
-    File(path).writeBytes(data.toByteArray())
+fun writeFileIntoPath(path: String, data: String): Result<Unit> {
+    return runCatching { File(path).writeBytes(data.toByteArray()) }
 }

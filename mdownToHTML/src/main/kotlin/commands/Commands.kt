@@ -5,12 +5,10 @@ object Commands {
         println("MDtoHTML v0.0.1")
     }
 
-    fun convert(args: List<String>): String {
+    fun convert(args: List<String>): Result<Unit> {
         if (args.size != 2) {
-            return "no"
-//            return Result.failure("Error: Incorrect usage. Please check help page.")
+            return Result.failure(IllegalArgumentException("Expected 2 arguments: <input> <output>"))
         }
-         parse(args[0], args[1])
-        return "yes"
+         return parse(args[0], args[1])
     }
 }
